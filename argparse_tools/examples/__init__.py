@@ -1,7 +1,9 @@
+# from . import runthis, runthat
+
+
 def examples_doctest():
     """
-    >>> from runthis import build_arg_parser
-    >>> build_arg_parser().print_help()
+    >>> runthis.build_arg_parser().print_help()
     usage: nosetests [-h] [--shared_option1 SHARED_OPTION1] [--some_setting]
                      [--another_setting ANOTHER_SETTING] [--custom_arg CUSTOM_ARG]
                      [--a A] [--b B] --opt2 OPT2
@@ -24,8 +26,7 @@ def examples_doctest():
 
 
 
-    >>> from runthat import build_arg_parser
-    >>> build_arg_parser().print_help()
+    >>> runthat.build_arg_parser().print_help()
     usage: nosetests [-h] [--shared_option1 SHARED_OPTION1] [--some_setting]
                      [--another_setting ANOTHER_SETTING] [--custom_arg CUSTOM_ARG]
     <BLANKLINE>
