@@ -1,5 +1,5 @@
-This package wraps argparse to facilitate a standardized set of arguments
-across various scripts and applications that may use argparse.
+This package wraps argparse to facilitate sharing a standardized set of
+arguments across various scripts and applications that may use argparse.
 
 For example, assume you have two scripts, "runthis.py" and "runthat.py," both
 of which share common arguments.  It may make sense to share the argument logic
