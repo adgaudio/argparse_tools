@@ -8,10 +8,10 @@ except ImportError:
 
 setup(
     name='argparse_tools',
-    version='1.0.0',
+    version='1.0.1',
     description=(
         'Share a standardized set of argparse arguments within your codebase'),
-    long_description=open('README.md').read(),
+    # long_description=open('README.md').read(),
     keywords=['argparse', ],
 
     author='Alex Gaudio',
@@ -19,7 +19,7 @@ setup(
     url='https://github.com/adgaudio/argparse_tools',
 
     packages=find_packages(),
-    data_files=[('README.md', ['README.md'])],
+    include_package_data=True,
     install_requires = ['argparse'],
     tests_require=['nose'],
     test_suite="nose.main",
