@@ -8,10 +8,10 @@ except ImportError:
 
 setup(
     name='argparse_tools',
-    version='1.0.1',
+    version='1.0.2',
     description=(
         'Share a standardized set of argparse arguments within your codebase'),
-    # long_description=open('README.md').read(),
+    long_description="Check the project homepage for details",
     keywords=['argparse', ],
 
     author='Alex Gaudio',
