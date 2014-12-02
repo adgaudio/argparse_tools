@@ -68,7 +68,7 @@ def group(description, *funcs, **kwargs):
             g = parser.add_mutually_exclusive_group(**kwargs)
         elif kwargs:
             raise UserWarning(
-                "Unrecognized kwargs: %s" % str(kwargs.keys()))
+                "Unrecognized kwargs: %s" % str(list(kwargs.keys())))
         else:
             g = parser.add_argument_group(description)
         for f in funcs:

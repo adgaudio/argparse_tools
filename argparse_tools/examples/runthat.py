@@ -2,7 +2,7 @@ from argparse_tools.examples import shared as at
 
 
 def main(ns):
-    print 'hello world from runthat! %s' % ns.__dict__
+    print('hello world from runthat! %s' % ns.__dict__)
 
 
 build_arg_parser = at.build_arg_parser([
