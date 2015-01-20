@@ -15,6 +15,7 @@ build_arg_parser = at.build_arg_parser([
         at.add_argument('--b'),
     ),
     at.opt2(required=True),
+    at.add_argument('--fenv', action=at.DefaultFromEnv, env_prefix='VAR_')
 ], description=(
     'An example implementation of argparse_tools that uses shared arguments'))
 
