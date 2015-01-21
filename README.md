@@ -14,7 +14,7 @@ Features:
 - Set default values directly from environment variables by
 setting action=DefaultFromEnv in the argument's options.
 - I think it's slightly cleaner than default argparse
-- Used at Sailthru in production (and there are no tests! Can you believe it?!)
+- Used at Sailthru in production
 - Actually, I use this everywhere I write Python code!
 
 ```
