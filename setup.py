@@ -8,7 +8,7 @@ except ImportError:
 
 setup(
     name='argparse_tools',
-    version='1.0.3',
+    version='1.0.4.dev0',
     description=(
         'Share a standardized set of argparse arguments within your codebase'),
     long_description="Check the project homepage for details",
