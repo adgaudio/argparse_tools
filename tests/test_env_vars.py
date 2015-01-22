@@ -36,3 +36,28 @@ def test_default_from_env():
     )
     ])().parse_args()
     nt.assert_equal(ns, argparse.Namespace(opt1='444'))
+
+
+def test_default_bool():
+    # This test shows what happens if you wanted both
+    # action='store_true'  and  action=at.DefaultFromEnv
+
+    # where env variable is defined, set the var to True
+    os.environ['TEST_DEFAULT_BOOL_OPT1'] = '444'
+    val = at.build_arg_parser([at.add_argument(
+        '--opt1', action=at.DefaultFromEnv, env_prefix='test_default_bool_',
+        type=bool),
+    ])().parse_args().opt1
+    nt.assert_is(val, True)
+    # where env var is undefined, set the var to None
+    val = at.build_arg_parser([at.add_argument(
+        '--opt1', action=at.DefaultFromEnv, type=bool),
+    ])().parse_args().opt1
+    # where the env var is defined but empty, set the var to False
+    os.environ['TEST_DEFAULT_BOOL_OPT2'] = ''
+    nt.assert_is(val, None)
+    val = at.build_arg_parser([at.add_argument(
+        '--opt2', action=at.DefaultFromEnv,
+        type=bool, env_prefix='test_default_bool_'),
+    ])().parse_args().opt2
+    nt.assert_is(val, False)
