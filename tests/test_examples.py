@@ -75,7 +75,7 @@ def test_doctest_env_vars():
     cmd = 'MYVAR_FENV=11 python -m argparse_tools.examples.runthis --opt2 2'
     rv = check_output(cmd, shell=True)
     expected = (
-        "hello world from runthis! {'a': None, 'b': None,"
-        " 'shared_option1': 12345, 'some_setting': False, 'custom_arg': 1,"
-        " 'fenv': '11', 'opt2': '2', 'another_setting': 5}\n")
+        b"hello world from runthis! {'a': None, 'b': None,"
+        b" 'shared_option1': 12345, 'some_setting': False, 'custom_arg': 1,"
+        b" 'fenv': '11', 'opt2': '2', 'another_setting': 5}\n")
     nt.assert_equal(rv, expected)
