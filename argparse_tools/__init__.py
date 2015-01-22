@@ -3,9 +3,6 @@ import functools
 import os
 
 
-class TooManyDefaultsDefined(Exception):
-    pass
-
 class DefaultFromEnv(argparse.Action):
     """Define defaults that are environment variables and still
     ensure that options like required=True works:
@@ -17,20 +14,19 @@ class DefaultFromEnv(argparse.Action):
             --> ensures that optB is defined.
             --> if not defined, fetches default from the environment var, OPTB
 
-        add_argument("--optC", action=DefaultFromEnv, required=True, default=1)
-            --> fails if OPTC is a defined environment var
+        add_argument("--optC", action=DefaultFromEnv, default=1)
+            --> first fetches val from environment, otherwise uses default=
     """
     def __init__(self, env_prefix="", **kwargs):
         kwargs = kwargs.copy()
         key = ("%s%s" % (env_prefix, kwargs['dest'])).upper()
         if key in os.environ:
             if 'default' in kwargs:
-                raise TooManyDefaultsDefined(
-                    "You must use either"
-                    "  default=...  or define an env var, %s" % key)
+                # the environment default overrides the code default
+                pass
             if kwargs.get('required'):
                 kwargs['required'] = False
-        kwargs['default'] = kwargs.get('default', os.getenv(key))
+        kwargs['default'] = os.getenv(key, kwargs.get('default'))
         super(DefaultFromEnv, self).__init__(**kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
