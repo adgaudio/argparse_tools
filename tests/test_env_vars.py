@@ -74,3 +74,35 @@ def test_default_bool():
         type=bool, env_prefix='test_default_bool_'),
     ])().parse_args().opt2
     nt.assert_is(val, False)
+
+
+def test_env_required():
+    # require env var
+    with nt.assert_raises(at.EnvironmentVarRequired):
+        at.build_arg_parser([at.add_argument(
+            '--opt1', action=at.DefaultFromEnv, env_prefix='test_env_required_',
+            envrequired=True
+        )])().parse_args()
+
+    # ignore hardcoded values for default=
+    with nt.assert_raises(at.EnvironmentVarRequired):
+        at.build_arg_parser([at.add_argument(
+            '--opt2', action=at.DefaultFromEnv, env_prefix='test_env_required_',
+            envrequired=True, default=11
+        )])().parse_args()
+
+    os.environ['TEST_ENV_REQUIRED_OPT3'] = '13'
+
+    # don't fail if env var is defined
+    ns = at.build_arg_parser([at.add_argument(
+        '--opt3', action=at.DefaultFromEnv, env_prefix='test_env_required_',
+        envrequired=True
+    )])().parse_args()
+    nt.assert_equal(ns, argparse.Namespace(opt3='13'))
+
+    # we should still ignore hardcoded default= values
+    ns = at.build_arg_parser([at.add_argument(
+        '--opt3', action=at.DefaultFromEnv, env_prefix='test_env_required_',
+        envrequired=True, default=11
+    )])().parse_args()
+    nt.assert_equal(ns, argparse.Namespace(opt3='13'))

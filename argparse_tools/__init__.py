@@ -3,21 +3,35 @@ import functools
 import os
 
 
+class TooManyDefaultsDefined(Exception):
+    pass
+
+
+class EnvironmentVarRequired(Exception):
+    pass
+
+
 class DefaultFromEnv(argparse.Action):
-    """Define defaults that are environment variables and still
-    ensure that options like required=True works:
+    """Define argument options that fetch defaults from environment variables
 
         add_argument("--optA", action=DefaultFromEnv)
-            --> as necessary, fetches default from the environment var, OPTA
+            --> fetches default from the environment var, OPTA
 
         add_argument("--optB", action=DefaultFromEnv, required=True)
-            --> ensures that optB is defined.
-            --> if not defined, fetches default from the environment var, OPTB
+            --> ensures that optB is defined
+                either in command-line, env var, or hardcoded default=
 
         add_argument("--optC", action=DefaultFromEnv, default=1)
-            --> first fetches val from environment, otherwise uses default=
+            --> first tries to get val from environment,
+                otherwise uses default=
+
+        add_argument("--optD", action=DefaultFromEnv, envrequired=True)
+        add_argument("--optD2", action=DefaultFromEnv, envrequired=True,
+                     default=1)
+            --> both fail if OPTD is not an environment variable
+            --> hardcoded 'default=...' is always ignored
     """
-    def __init__(self, env_prefix="", **kwargs):
+    def __init__(self, env_prefix="", envrequired=False, **kwargs):
         kwargs = kwargs.copy()
         key = ("%s%s" % (env_prefix, kwargs['dest'])).upper()
         if key in os.environ:
@@ -26,6 +40,8 @@ class DefaultFromEnv(argparse.Action):
                 pass
             if kwargs.get('required'):
                 kwargs['required'] = False
+        elif envrequired:
+            raise EnvironmentVarRequired(key)
         kwargs['default'] = os.getenv(key, kwargs.get('default'))
         super(DefaultFromEnv, self).__init__(**kwargs)
 

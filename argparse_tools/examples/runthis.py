@@ -16,6 +16,8 @@ build_arg_parser = at.build_arg_parser([
     ),
     at.opt2(required=True),
     at.add_argument('--fenv', action=at.DefaultFromEnv, env_prefix='MYVAR_')
+    # this option would require that the var is defined in os environment
+    # at.add_argument('--fenv2', action=at.DefaultFromEnv, envrequired=True)
 ], description=(
     'An example implementation of argparse_tools that uses shared arguments'))
 
