@@ -151,11 +151,40 @@ def mutually_exclusive(*funcs, **kwargs):
     return group(None, *funcs, mutually_exclusive=True, **kwargs)
 
 
-def build_arg_parser(funcs=None, **argument_parser_kwargs):
+def add_subparsers(dct, **kwargs):
+    """
+    Declarative way to define subparsers.
+    Returns a closure that accepts a parent parser and adds subparsers to it.
+
+    `dct` - a dict like
+        {"subparserA": [add_argument('--in_a_only'), ...],
+         "subparserB": [add_argument('--in_b_only'), ...]
+        }
+
+    Meant to be used like this:
+        build_arg_parser([
+            add_argument('--opt1'),
+            add_subparsers({
+                'subparserA': [add_argument('--in_a_only')],
+                'subparserB': [add_argument('--in_b_only')]})
+        ])
+    """
+    def _add_subparsers(parser):
+        factory = parser.add_subparsers(**kwargs)
+        for name in sorted(dct.keys()):
+            funcs = dct[name]
+            _subparser = factory.add_parser(name)
+            build_arg_parser(funcs, _subparser)
+    return _add_subparsers
+
+
+def build_arg_parser(funcs=None, parser=None, **argument_parser_kwargs):
     """Returns an argparse.ArgumentParser that applies each func in funcs to
     the parser.
 
     funcs - None or a list of funcs that accept an argparse.ArgumentParser,
+    parser - None or an instance of an argparse.ArgumentParser.  If not given,
+        create our own.
 
     If funcs is not None, return a closure.
 
@@ -172,12 +201,15 @@ def build_arg_parser(funcs=None, **argument_parser_kwargs):
         funcs = []
     else:
         _closure = True
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-        **argument_parser_kwargs)
+    if not parser:
+        parser = argparse.ArgumentParser(
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+            **argument_parser_kwargs)
     for func in funcs:
         if func:
             func(parser)
     if _closure:
-        return (lambda: parser)
+        def _I_return_an_ArgumentParser():
+            return parser
+        return _I_return_an_ArgumentParser
     return parser

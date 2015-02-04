@@ -1,6 +1,6 @@
 from argparse_tools import (
     build_arg_parser, add_argument, group, mutually_exclusive, lazy_kwargs,
-    DefaultFromEnv
+    add_subparsers, DefaultFromEnv
 )
 
 

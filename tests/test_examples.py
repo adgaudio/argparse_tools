@@ -1,8 +1,25 @@
 import argparse
-from argparse_tools.examples import runthis, runthat
+from argparse_tools.examples import runthis, runthat, simple_subparsers_example
 import nose.tools as nt
 from subprocess import check_output
 
+
+def test_doctest_simple_subparsers_example():
+    """
+    >>> simple_subparsers_example.build_arg_parser().print_help()
+    usage: nosetests [-h] [--shared_option1 SHARED_OPTION1] {optionA,optionB} ...
+    <BLANKLINE>
+    positional arguments:
+      {optionA,optionB}
+    <BLANKLINE>
+    optional arguments:
+      -h, --help            show this help message and exit
+      --shared_option1 SHARED_OPTION1
+
+
+    >>> simple_subparsers_example.build_arg_parser().parse_args(['optionB'])
+    Namespace(another_setting=5, shared_option1=12345, some_setting=False)
+    """
 
 def test_doctest_examples_help():
     """
