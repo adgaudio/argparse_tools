@@ -171,6 +171,9 @@ def add_subparsers(dct, **kwargs):
     """
     def _add_subparsers(parser):
         factory = parser.add_subparsers(**kwargs)
+        # hack: bypass bug in python3 argparse
+        # http://stackoverflow.com/questions/22990977/why-does-this-argparse-code-behave-differently-between-python-2-and-3
+        factory.required = True
         for name in sorted(dct.keys()):
             funcs = dct[name]
             _subparser = factory.add_parser(name)

@@ -17,5 +17,8 @@ def test_add_subparsers():
         p.parse_args(['--opt1', '1', 'subparserA', '--in_b_only'])
 
     # subparsers are required
-    with nt.assert_raises(SystemExit):
+    with nt.assert_raises((SystemExit, TypeError)):
+        # TypeError due to
+        # http://stackoverflow.com/questions/22990977/
+        # /why-does-this-argparse-code-behave-differently-between-python-2-and-3
         ns = p.parse_args(['--opt1', '1'])
