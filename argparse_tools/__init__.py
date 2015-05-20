@@ -43,6 +43,8 @@ class DefaultFromEnv(argparse.Action):
         elif envrequired:
             raise EnvironmentVarRequired(key)
         kwargs['default'] = os.getenv(key, kwargs.get('default'))
+        kwargs['metavar'] = "%s%s" % (
+            env_prefix, kwargs.get('metavar', kwargs['dest'].upper()))
         super(DefaultFromEnv, self).__init__(**kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
