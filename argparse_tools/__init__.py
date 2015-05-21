@@ -44,11 +44,63 @@ class DefaultFromEnv(argparse.Action):
             raise EnvironmentVarRequired(key)
         kwargs['default'] = os.getenv(key, kwargs.get('default'))
         kwargs['metavar'] = "%s%s" % (
-            env_prefix, kwargs.get('metavar', kwargs['dest'].upper()))
+            env_prefix, kwargs.get('metavar') or kwargs['dest'].upper())
         super(DefaultFromEnv, self).__init__(**kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
         setattr(namespace, self.dest, values)
+
+
+def add_argument_default_from_env_factory(env_prefix=""):
+    """Return an add_argument(...) function that gets defaults from an
+    environment variable (using the DefaultFromEnv action), but also lets
+    users use some specifically supported actions like
+    'store_true' and 'store_false'
+
+    >>> add_argument = add_argument_default_from_env_factory("PREFIX_")
+    >>> p = build_arg_parser([\
+        add_argument('--blah', action='store_true'),\
+        add_argument('--bloo', action='store_false'),\
+    ])()
+
+    >>> p.print_help()
+    usage: nosetests [-h] [--blah [PREFIX_BLAH]] [--bloo [PREFIX_BLOO]]
+    <BLANKLINE>
+    optional arguments:
+      -h, --help            show this help message and exit
+      --blah [PREFIX_BLAH]
+      --bloo [PREFIX_BLOO]
+
+    >>> p.parse_args(['--blah', '--bloo'])
+    Namespace(blah=True, bloo=False)
+
+    """
+    @functools.wraps(add_argument)
+    def _add_argument(*args, **kwargs):
+        """Wraps argparse.ArgumentParser.add_argument to guarantee that all
+        defined options are available from environment variables.
+
+        Use as you would add_argument, but be warned that most actions will
+        not work.  Acceptable actions are 'store_true' and 'store_false'.
+        """
+        if 'action' in kwargs:
+            val = kwargs.pop('action')
+            if val == 'store_true':
+                kwargs['const'] = True
+                kwargs['nargs'] = '?'
+            elif val == 'store_false':
+                kwargs['const'] = False
+                kwargs['nargs'] = '?'
+            else:
+                raise NotImplemented(
+                    "Not sure how to deal with this argparse argument option."
+                    " add_argument() applies a custom action to get defaults"
+                    " from"
+                    " the environment.  You cannot specify action=%s for the"
+                    " argument identified by: %s" % (val, str(args[:2])))
+        return add_argument(
+            *args, action=DefaultFromEnv, env_prefix=env_prefix, **kwargs)
+    return _add_argument
 
 
 def lazy_kwargs(f):
